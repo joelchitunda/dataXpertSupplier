@@ -21,7 +21,7 @@ public class EstoqueFilialServiceImpl implements EstoqueFilialService {
 
 	public List<EstoqueFilial> ObterEstoquePorFornecedor(String cnpjfornecedor, String descricao) {
 
-		return repository.ObterEstoqueFilialPorEAN(cnpjfornecedor, descricao);
+		return repository.ObterEstoquePorFornecedor(cnpjfornecedor, descricao);
 
 	}
 }

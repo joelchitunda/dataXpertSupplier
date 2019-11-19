@@ -9,4 +9,6 @@ public interface ProdutoService {
 
 	List<Produto> ObterProdutoEanPorDescricao(String descricao);
 
+	List<Produto> ObterProdutoPorDescricao(String cnpjfornecedor, String descricao);
+
 }

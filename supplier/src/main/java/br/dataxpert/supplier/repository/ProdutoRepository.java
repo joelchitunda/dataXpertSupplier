@@ -9,6 +9,8 @@ public interface ProdutoRepository {
 
 	List<Produto> ObterProdutoEanPorDescricao(String descricao);
 
+	List<Produto> ObterProdutoPorDescricao(String cnpjfornecedor, String descricao);
+
 }
 
 

@@ -20,7 +20,7 @@ public class Conexao {
 
 	}
 
-	public void commit()  {// "comitta" a conexao SUPER CUIDADO AO USAR
+	public void commit()  {// "commita" a conexao SUPER CUIDADO AO USAR
 
 		try {
 			

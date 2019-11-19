@@ -1,6 +1,5 @@
 package br.dataxpert.supplier.repository;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,42 +14,47 @@ import br.dataxpert.supplier.model.Produto;
 @Repository
 public class ProdutoRepositoryImpl implements ProdutoRepository {
 
-	/*static {
-
-		try {
-
-			Class.forName("org.postgresql.Driver");
-
-		} catch (ClassNotFoundException ex) {
-
-		}
-
-	}
-
-	private Connection getConnection() throws SQLException {
-
-		return DriverManager.getConnection("jdbc:postgresql://localhost:5432/meb_db", "postgres", "ma220905");
-
-	}
-
-	private void closeConnection(Connection connection) {
-
-		if (connection == null)
-
-			return;
-
-		try {
-
-			connection.close();
-
-		} catch (SQLException ex) {
-
-		}
-		
-	}*/
+	/*
+	 * static {
+	 * 
+	 * try {
+	 * 
+	 * Class.forName("org.postgresql.Driver");
+	 * 
+	 * } catch (ClassNotFoundException ex) {
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * private Connection getConnection() throws SQLException {
+	 * 
+	 * return DriverManager.getConnection("jdbc:postgresql://localhost:5432/meb_db",
+	 * "postgres", "ma220905");
+	 * 
+	 * }
+	 * 
+	 * private void closeConnection(Connection connection) {
+	 * 
+	 * if (connection == null)
+	 * 
+	 * return;
+	 * 
+	 * try {
+	 * 
+	 * connection.close();
+	 * 
+	 * } catch (SQLException ex) {
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 
 	public List<Produto> ObterProdutoEanPorDescricao(String descricao) {
 
+		descricao = descricao.toUpperCase();
+		
 		Connection connection = null;
 
 		String sql = "Select pcprodut.codprod, ";
@@ -59,16 +63,16 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 		sql += " Where pcprodut.descricao like '%" + descricao + "%'";
 		sql += " Order by descricao ";
 
-		List<Produto> result = new ArrayList<Produto>();
-		
+		List<Produto> results = new ArrayList<Produto>();
+
 		try {
-			
+
 			connection = Conexao.getConexao();
 			PreparedStatement statement = connection.prepareStatement(sql);
 			ResultSet resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
-				
+
 				Produto item = new Produto();
 				String codproduto = resultSet.getString("CODPROD").toString();
 				item.setCodproduto(codproduto);
@@ -78,23 +82,86 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 				item.setDescproduto(descproduto);
 				String ean = resultSet.getString("CODAUXILIAR").toString();
 				item.setEan(ean);
-				result.add(item);
-				
+				results.add(item);
+
 			}
-			
+
 		} catch (Exception err) {
-			
+
 			String errMsg = err.getMessage();
 			// logger.info("Erro geral : {}", errMsg);
-			
-		} finally {
-			
-			Conexao.close();
-			
-		}
-		
-		return result;
 
+		} finally {
+
+			Conexao.close();
+
+		}
+
+		return results;
+
+	}
+
+	public List<Produto> ObterProdutoPorDescricao(String cnpjfornecedor, String descricao) {
+
+		descricao = descricao.toUpperCase();
+		
+		Connection connection = null;
+
+		String sql = "Select pcprodut.codprod, ";
+		sql += " pcprodut.descricao descricao, pcprodut.classevenda , pcprodut.codauxiliar ";
+		sql += " From pcmov, pcprodut, pcfornec ";
+		sql += " Where pcmov.codoper = 'S' ";
+		sql += " And pcmov.codprod = pcprodut.codprod ";
+		sql += " And pcprodut.codfornec = pcfornec.codfornec ";
+		sql += " And pcfornec.cgc = '" + cnpjfornecedor + "'";
+		sql += " And pcprodut.descricao like '%" + descricao + "%'";
+		sql += " UNION ";
+		sql += "Select pcprodut.codprod, ";
+		sql += " pcprodut.descricao descricao, pcprodut.classevenda , pcprodut.codauxiliar ";
+		sql += " From pcmov, pcprodut, pcfornec, pcnfsaid ";
+		sql += " Where pcmov.codoper = 'S' ";
+		sql += " And pcmov.codprod = pcprodut.codprod ";
+		sql += " And pcmov.numnota = pcnfsaid.numnota ";
+		sql += " And pcfornec.codfornec = pcnfsaid.codfornec ";
+		sql += " And pcfornec.cgc = '" + cnpjfornecedor + "'";
+		sql += " And pcprodut.descricao like '%" + descricao + "%'";
+		sql += " Order by descricao ";
+
+		List<Produto> results = new ArrayList<Produto>();
+
+		try {
+
+			connection = Conexao.getConexao();
+			PreparedStatement statement = connection.prepareStatement(sql);
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+
+				Produto item = new Produto();
+				String codproduto = resultSet.getString("CODPROD").toString();
+				item.setCodproduto(codproduto);
+				String classevenda = resultSet.getString("CLASSEVENDA").toString();
+				item.setClassevenda(classevenda);
+				String descproduto = resultSet.getString("DESCRICAO").toString();
+				item.setDescproduto(descproduto);
+				String ean = resultSet.getString("CODAUXILIAR").toString();
+				item.setEan(ean);
+				results.add(item);
+
+			}
+
+		} catch (Exception err) {
+
+			String errMsg = err.getMessage();
+			// logger.info("Erro geral : {}", errMsg);
+
+		} finally {
+
+			Conexao.close();
+
+		}
+
+		return results;
 	};
 
 }

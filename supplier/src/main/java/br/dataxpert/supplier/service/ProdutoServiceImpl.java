@@ -19,4 +19,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 
 	}
 
+	public List<Produto> ObterProdutoPorDescricao(String cnpjfornecedor, String descricao) {
+		
+		return repository.ObterProdutoPorDescricao(cnpjfornecedor,descricao);
+	}
+
 }
