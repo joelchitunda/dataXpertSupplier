@@ -1,11 +1,11 @@
 package br.dataxpert.supplier.repository;
 
-import java.util.List;
-
-import br.dataxpert.supplier.model.NotaFiscalFornecedor;
+import java.sql.Connection;
 
 public interface NFERepository {
 
-	List<NotaFiscalFornecedor> ObterNotaFiscalPorFornecedor(String cnpj, String ano);
+	String RegistrarEntradaNFFilial(String filial, String chavenfe, String usuario, String data);
+	
+	String ModificarSituacaoNFe(String chavenfe, int status, Connection conn);
 
 }

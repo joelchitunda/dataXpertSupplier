@@ -2,11 +2,11 @@ package br.dataxpert.supplier.model;
 
 public class ResumoPedidoFornecedor {
 	
-	public String ano;
-	public String mes;
-	public String qtde;
-	public String valorpedido;
-	public String valorfaturado;
+	private String ano;
+	private String mes;
+	private String qtde;
+	private String valorpedido;
+	private String valorfaturado;
 	
 
 	public String getAno() {

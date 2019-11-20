@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Conexao {
 
-	private static Connection conexao = null;
+	public static Connection conexao = null;
 
 	public static void close() {// fecha a conexao
 
@@ -74,8 +74,13 @@ public class Conexao {
 			} catch (SQLException e) {
 				
 				e.printStackTrace();
+				
 			}
+			
 			return conexao;
+			
 		}
+		
 	}
+	
 }

@@ -1,10 +1,9 @@
 package br.dataxpert.supplier.service;
 
-import java.util.List;
+import java.sql.Connection;
 
 import org.springframework.stereotype.Service;
 
-import br.dataxpert.supplier.model.NotaFiscalFornecedor;
 import br.dataxpert.supplier.repository.NFERepository;
 
 @Service
@@ -13,9 +12,16 @@ public class NFEServiceImpl implements NFEService {
 	public NFERepository repository;
 	
 
-	public List<NotaFiscalFornecedor> ObterNotaFiscalPorFornecedor(String cnpj, String ano) {
+	public String RegistrarEntradaNFFilial(String filial, String chavenfe, String usuario, String data) {
 
-		return repository.ObterNotaFiscalPorFornecedor(cnpj, ano);
+		return repository.RegistrarEntradaNFFilial(filial, chavenfe, usuario, data);
+
+	}
+
+	public String ModificarSituacaoNFe(String chavenfe, int status, Connection conn) {
+
+		return repository.ModificarSituacaoNFe(chavenfe, status, conn);
+
 	}
 
 }
