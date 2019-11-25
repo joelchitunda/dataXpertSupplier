@@ -28,7 +28,7 @@ public class ProdutoController {
 		List<Produto> produtos = produtoService.ObterProdutoPorDescricao(cnpjfornecedor, descricao);
 		if (produtos.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
-			// You many decide to return HttpStatus.NOT_FOUND
+			// You may decide to return HttpStatus.NOT_FOUND
 		}
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 	}
@@ -38,7 +38,7 @@ public class ProdutoController {
 		List<Produto> produtos = produtoService.ObterProdutoEanPorDescricao(descricao);
 		if (produtos.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
-			// You many decide to return HttpStatus.NOT_FOUND
+			// You may decide to return HttpStatus.NOT_FOUND
 		}
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 	}

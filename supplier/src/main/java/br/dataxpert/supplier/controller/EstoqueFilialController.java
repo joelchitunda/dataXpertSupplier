@@ -29,7 +29,7 @@ public class EstoqueFilialController {
 		List<EstoqueFilial> estoques = estoqueFilialService.ObterEstoquePorFornecedor(cnpjfornecedor, descricao);
 		if (estoques.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
-			// You many decide to return HttpStatus.NOT_FOUND
+			// You may decide to return HttpStatus.NOT_FOUND
 		}
 		return new ResponseEntity<List<EstoqueFilial>>(estoques, HttpStatus.OK);
 	}
@@ -40,7 +40,7 @@ public class EstoqueFilialController {
 		List<EstoqueFilial> estoques = estoqueFilialService.ObterEstoqueFilialPorEAN(filial, ean);
 		if (estoques.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
-			// You many decide to return HttpStatus.NOT_FOUND
+			// You may decide to return HttpStatus.NOT_FOUND
 		}
 		return new ResponseEntity<List<EstoqueFilial>>(estoques, HttpStatus.OK);
 	}
