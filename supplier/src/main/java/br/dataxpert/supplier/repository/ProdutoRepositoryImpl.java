@@ -1,8 +1,10 @@
 package br.dataxpert.supplier.repository;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +56,6 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 	public List<Produto> ObterProdutoEanPorDescricao(String descricao) {
 
 		descricao = descricao.toUpperCase();
-		
-		Connection connection = null;
 
 		String sql = "Select pcprodut.codprod, ";
 		sql += " pcprodut.descricao descricao, pcprodut.classevenda , pcprodut.codauxiliar ";
@@ -65,11 +65,10 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 
 		List<Produto> results = new ArrayList<Produto>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@10.10.0.15:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -83,20 +82,20 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 				String ean = resultSet.getString("CODAUXILIAR").toString();
 				item.setEan(ean);
 				results.add(item);
-
 			}
+			
+			results.forEach(x -> System.out.println(x));
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
-
-			Conexao.close();
-
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
 		}
-
+		
 		return results;
 
 	}
@@ -104,7 +103,7 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 	public List<Produto> ObterProdutoPorDescricao(String cnpjfornecedor, String descricao) {
 
 		descricao = descricao.toUpperCase();
-		
+
 		Connection connection = null;
 
 		String sql = "Select pcprodut.codprod, ";

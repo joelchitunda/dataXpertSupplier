@@ -55,8 +55,8 @@ public class Conexao {
 
 			try {
 
-				String driver = "oracle.jdbc.OracleDriver";// para rodar em bancos oracle ->
-				// String driver = "oracle.jdbc.driver.OracleDriver";
+				//String driver = "oracle.jdbc.OracleDriver";// para rodar em bancos oracle ->
+				 String driver = "oracle.jdbc.driver.OracleDriver";
 				String url = "jdbc:oracle:thin:@10.10.0.15:1521/WINTHOR";// localização do banco ->
 				// String url = "jdbc:oracle:thin:@10.10.0.15:1521/WINTHOR ";
 				String user = "WINTHOR";
