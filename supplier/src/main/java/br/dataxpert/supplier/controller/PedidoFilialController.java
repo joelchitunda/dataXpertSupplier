@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.dataxpert.supplier.model.ItemPedidoFilial;
 import br.dataxpert.supplier.model.PedidoFilial;
@@ -18,7 +19,7 @@ import br.dataxpert.supplier.service.PedidoFilialService;
 import br.dataxpert.supplier.service.ProdutoService;
 
 @Controller
-@RequestMapping("/pedidofilial")
+@RequestMapping("api/pedidofilial")
 public class PedidoFilialController {
 
 	// public static final Logger logger =
@@ -27,9 +28,9 @@ public class PedidoFilialController {
 	@Autowired
 	private PedidoFilialService pedidoFilialService;
 
-	@RequestMapping(value = "/ObterPedidoFilialPorFornecedor/", method = RequestMethod.GET)
-	public ResponseEntity<List<PedidoFilial>> ObterPedidoFilialPorFornecedor(@PathVariable String cnpj,
-			@PathVariable String ano, @PathVariable String mes) {
+	@RequestMapping(value = "/ObterPedidoFilialPorFornecedor", method = RequestMethod.GET)
+	public ResponseEntity<List<PedidoFilial>> ObterPedidoFilialPorFornecedor(@RequestParam(value="cnpj") String cnpj,
+			@RequestParam(value="ano") String ano, @RequestParam(value="mes") String mes) {
 
 		List<PedidoFilial> pedidos = pedidoFilialService.ObterPedidoFilialPorFornecedor(cnpj, ano, mes);
 
@@ -44,9 +45,9 @@ public class PedidoFilialController {
 
 	}
 
-	@RequestMapping(value = "/ObterItemPedidoFilialPorPedido/", method = RequestMethod.GET)
-	public ResponseEntity<List<ItemPedidoFilial>> ObterItemPedidoFilialPorPedido(@PathVariable String filial,
-			@PathVariable String pedido) {
+	@RequestMapping(value = "/ObterItemPedidoFilialPorPedido", method = RequestMethod.GET)
+	public ResponseEntity<List<ItemPedidoFilial>> ObterItemPedidoFilialPorPedido(@RequestParam(value="filial") String filial,
+			@RequestParam(value="pedido") String pedido) {
 
 		List<ItemPedidoFilial> itens = pedidoFilialService.ObterItemPedidoFilialPorPedido(filial, pedido);
 
@@ -61,8 +62,8 @@ public class PedidoFilialController {
 
 	}
 	
-	@RequestMapping(value = "/ObterResumoPedidosFornecedor/", method = RequestMethod.GET)
-	public ResponseEntity<List<ResumoPedidoFornecedor>> ObterResumoPedidosFornecedor(@PathVariable String cnpj) {
+	@RequestMapping(value = "/ObterResumoPedidosFornecedor", method = RequestMethod.GET)
+	public ResponseEntity<List<ResumoPedidoFornecedor>> ObterResumoPedidosFornecedor(@RequestParam(value="cnpj") String cnpj) {
 
 		List<ResumoPedidoFornecedor> resumos = pedidoFilialService.ObterResumoPedidosFornecedor(cnpj);
 

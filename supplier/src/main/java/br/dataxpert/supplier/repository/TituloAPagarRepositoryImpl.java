@@ -1,40 +1,38 @@
 package br.dataxpert.supplier.repository;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import br.dataxpert.supplier.conexaoBD.Conexao;
 import br.dataxpert.supplier.model.TituloAPagar;
 
 @Repository
 public class TituloAPagarRepositoryImpl implements TituloAPagarRepository {
 
 	public List<TituloAPagar> ObterTituloAPagarPorFornecedor(String cnpj, String ano) {
-		
-		Connection connection = null;
-		
+
 		String sql = " Select pclanc.recnum, pclanc.dtlanc, pclanc.historico, pclanc.numnota, ";
-        sql += " pclanc.duplic, pclanc.valor, pclanc.dtvenc, pclanc.dtpagto,  ";
-        sql += " pclanc.codfilial, pclanc.formapgto, pclanc.numtransentnf ";
-        sql += " From pclanc, pcfornec ";
-        sql += " Where pclanc.codfornec = pcfornec.codfornec  ";
-        sql += " and pcfornec.cgc = '" + cnpj + "'";
-        sql += " and extract(year from pclanc.dtvenc) = " + ano;
-        sql += " and pclanc.numtransentnf > 0 ";
-        sql += " Order by pclanc.dtvenc desc  ";
+		sql += " pclanc.duplic, pclanc.valor, pclanc.dtvenc, pclanc.dtpagto,  ";
+		sql += " pclanc.codfilial, pclanc.formapgto, pclanc.numtransentnf ";
+		sql += " From pclanc, pcfornec ";
+		sql += " Where pclanc.codfornec = pcfornec.codfornec  ";
+		sql += " and pcfornec.cgc = '" + cnpj + "'";
+		sql += " and extract(year from pclanc.dtvenc) = " + ano;
+		sql += " and pclanc.numtransentnf > 0 ";
+		sql += " Order by pclanc.dtvenc desc  ";
 
 		List<TituloAPagar> results = new ArrayList<TituloAPagar>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -62,17 +60,16 @@ public class TituloAPagarRepositoryImpl implements TituloAPagarRepository {
 				String numtransacao = resultSet.getString("NUMTRANSENTNF").toString();
 				item.setNumtransacao(numtransacao);
 				results.add(item);
-				
+
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 
@@ -82,25 +79,21 @@ public class TituloAPagarRepositoryImpl implements TituloAPagarRepository {
 
 	public List<TituloAPagar> ObterTotalAPagarPorFornecedor(String cnpj, String ano) {
 
-		Connection connection = null;
-
-		
 		String sql = " Select extract(month from pclanc.dtlanc) MES, sum(pclanc.valor) VALOR ";
-        sql += " From pclanc, pcfornec ";
-        sql += " Where pclanc.codfornec = pcfornec.codfornec  ";
-        sql += " and pcfornec.cgc = '" + cnpj + "'";
-        sql += " and extract(year from pclanc.dtvenc) = " + ano;
-        sql += " and pclanc.numtransentnf > 0 ";
-        sql += " Group by extract(month from pclanc.dtlanc)  ";
-        sql += " Order by extract(month from pclanc.dtlanc)  ";
+		sql += " From pclanc, pcfornec ";
+		sql += " Where pclanc.codfornec = pcfornec.codfornec  ";
+		sql += " and pcfornec.cgc = '" + cnpj + "'";
+		sql += " and extract(year from pclanc.dtvenc) = " + ano;
+		sql += " and pclanc.numtransentnf > 0 ";
+		sql += " Group by extract(month from pclanc.dtlanc)  ";
+		sql += " Order by extract(month from pclanc.dtlanc)  ";
 
 		List<TituloAPagar> results = new ArrayList<TituloAPagar>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -113,14 +106,13 @@ public class TituloAPagarRepositoryImpl implements TituloAPagarRepository {
 
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 

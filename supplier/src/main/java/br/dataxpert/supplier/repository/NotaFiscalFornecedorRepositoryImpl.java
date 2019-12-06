@@ -1,22 +1,21 @@
 package br.dataxpert.supplier.repository;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import br.dataxpert.supplier.conexaoBD.Conexao;
 import br.dataxpert.supplier.model.NotaFiscalFornecedor;
 
 @Repository
 public class NotaFiscalFornecedorRepositoryImpl implements NotaFiscalFornecedorRepository {
 
 	public List<NotaFiscalFornecedor> ObterNotaFiscalPorFornecedor(String cnpj, String ano) {
-
-		Connection connection = null;
 
 		String sql = " select numnota, dtemissao, vltotal, totpeso, dtsaida, codfilial, uf, chavenfe, ";
 		sql += " cgcfilial, uffilial   , prazo ";
@@ -27,11 +26,10 @@ public class NotaFiscalFornecedorRepositoryImpl implements NotaFiscalFornecedorR
 
 		List<NotaFiscalFornecedor> results = new ArrayList<NotaFiscalFornecedor>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -58,14 +56,13 @@ public class NotaFiscalFornecedorRepositoryImpl implements NotaFiscalFornecedorR
 
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 

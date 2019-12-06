@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,12 +22,11 @@ public class ProdutoController {
 
 	@Autowired
 	private ProdutoService produtoService;
+	
+	@RequestMapping(value = "/ObterProdutoEanPorDescricao", method = RequestMethod.GET)
+	public ResponseEntity<List<Produto>> ObterProdutoEanPorDescricao(@RequestParam(value="descricao") String descricao) {
 
-	@RequestMapping(value = "/ObterProdutoPorDescricao/", method = RequestMethod.GET)
-	public ResponseEntity<List<Produto>> ObterProdutoPorDescricao(@RequestParam(value="cnpjfornecedor") String cnpjfornecedor,
-			@RequestParam(value="descricao") String descricao) {
-
-		List<Produto> produtos = produtoService.ObterProdutoPorDescricao(cnpjfornecedor, descricao);
+		List<Produto> produtos = produtoService.ObterProdutoEanPorDescricao(descricao);
 
 		if (produtos.isEmpty()) {
 
@@ -40,12 +38,12 @@ public class ProdutoController {
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value = "/ObterProdutoPorDescricao", method = RequestMethod.GET)
+	public ResponseEntity<List<Produto>> ObterProdutoPorDescricao(@RequestParam(value="cnpjfornecedor") String cnpjfornecedor,
+			@RequestParam(value="descricao") String descricao) {
 
-	@RequestMapping(value = "/ObterProdutoEanPorDescricao/", method = RequestMethod.GET)
-
-	public ResponseEntity<List<Produto>> ObterProdutoEanPorDescricao(@RequestParam(value="descricao") String descricao) {
-
-		List<Produto> produtos = produtoService.ObterProdutoEanPorDescricao(descricao);
+		List<Produto> produtos = produtoService.ObterProdutoPorDescricao(cnpjfornecedor, descricao);
 
 		if (produtos.isEmpty()) {
 

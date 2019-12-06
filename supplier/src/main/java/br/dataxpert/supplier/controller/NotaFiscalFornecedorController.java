@@ -9,12 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.dataxpert.supplier.model.NotaFiscalFornecedor;
 import br.dataxpert.supplier.service.NotaFiscalFornecedorService;
 
 @Controller
-@RequestMapping("/notafiscalfornecedor")
+@RequestMapping("api/notafiscalfornecedor")
 public class NotaFiscalFornecedorController {
 
 	// public static final Logger logger =
@@ -23,9 +24,9 @@ public class NotaFiscalFornecedorController {
 	@Autowired
 	private NotaFiscalFornecedorService notaFiscalFornecedorService;
 
-	@RequestMapping(value = "/ObterNotaFiscalPorFornecedor/", method = RequestMethod.GET)
-	public ResponseEntity<List<NotaFiscalFornecedor>> ObterNotaFiscalPorFornecedor(@PathVariable String cnpj,
-			@PathVariable String ano) {
+	@RequestMapping(value = "/ObterNotaFiscalPorFornecedor", method = RequestMethod.GET)
+	public ResponseEntity<List<NotaFiscalFornecedor>> ObterNotaFiscalPorFornecedor(@RequestParam(value="cnpj") String cnpj,
+			@RequestParam(value="ano") String ano) {
 
 		List<NotaFiscalFornecedor> notas = notaFiscalFornecedorService.ObterNotaFiscalPorFornecedor(cnpj, ano);
 

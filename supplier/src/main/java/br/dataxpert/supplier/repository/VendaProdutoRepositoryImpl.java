@@ -1,57 +1,54 @@
 package br.dataxpert.supplier.repository;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import br.dataxpert.supplier.conexaoBD.Conexao;
-import br.dataxpert.supplier.model.Produto;
 import br.dataxpert.supplier.model.VendaProduto;
 
 @Repository
 public class VendaProdutoRepositoryImpl implements VendaProdutoRepository {
 
 	public List<VendaProduto> ObterVendaProdutoPorFornecedor(String cnpjfornecedor, String descricao, String ano) {
-		
+
 		descricao = descricao.toUpperCase();
-		
-		Connection connection = null;
 
 		String sql = "Select pcmov.codfilial, extract(month from dtmov) mes, pcprodut.codprod, ";
-          sql += " pcprodut.descricao, pcprodut.classevenda , sum(pcmov.qt) vendas ";
-          sql += " From pcmov, pcprodut, pcfornec ";
-          sql += " Where pcmov.codoper = 'S' ";
-          sql += " And extract(year from dtmov) = " + ano;
-          sql += " And pcmov.codprod = pcprodut.codprod ";
-          sql += " And pcprodut.codfornec = pcfornec.codfornec ";
-          sql += " And pcfornec.cgc = '" + cnpjfornecedor + "'";
-          sql += " And pcprodut.descricao like '%" + descricao + "%'";
-          sql += " Group by pcmov.codfilial, extract(month from dtmov), pcprodut.codprod, pcprodut.descricao, pcprodut.classevenda ";
-          sql += " UNION ";
-          sql += "Select pcmov.codfilial, extract(month from dtmov) mes, pcprodut.codprod, ";
-          sql += " pcprodut.descricao, pcprodut.classevenda , sum(pcmov.qt) vendas ";
-          sql += " From pcmov, pcprodut, pcfornec, pcnfsaid ";
-          sql += " Where pcmov.codoper = 'S' ";
-          sql += " And extract(year from dtmov) = " + ano;
-          sql += " And pcmov.codprod = pcprodut.codprod ";
-          sql += " And pcmov.numnota = pcnfsaid.numnota ";
-          sql += " And pcfornec.codfornec = pcnfsaid.codfornec ";
-          sql += " And pcfornec.cgc = '" + cnpjfornecedor + "'";
-          sql += " And pcprodut.descricao like '%" + descricao + "%'";
-          sql += " Group by pcmov.codfilial, extract(month from dtmov), pcprodut.codprod, pcprodut.descricao, pcprodut.classevenda ";
-          sql += " Order by mes ";
+		sql += " pcprodut.descricao, pcprodut.classevenda , sum(pcmov.qt) vendas ";
+		sql += " From pcmov, pcprodut, pcfornec ";
+		sql += " Where pcmov.codoper = 'S' ";
+		sql += " And extract(year from dtmov) = " + ano;
+		sql += " And pcmov.codprod = pcprodut.codprod ";
+		sql += " And pcprodut.codfornec = pcfornec.codfornec ";
+		sql += " And pcfornec.cgc = '" + cnpjfornecedor + "'";
+		sql += " And pcprodut.descricao like '%" + descricao + "%'";
+		sql += " Group by pcmov.codfilial, extract(month from dtmov), pcprodut.codprod, pcprodut.descricao, pcprodut.classevenda ";
+		sql += " UNION ";
+		sql += "Select pcmov.codfilial, extract(month from dtmov) mes, pcprodut.codprod, ";
+		sql += " pcprodut.descricao, pcprodut.classevenda , sum(pcmov.qt) vendas ";
+		sql += " From pcmov, pcprodut, pcfornec, pcnfsaid ";
+		sql += " Where pcmov.codoper = 'S' ";
+		sql += " And extract(year from dtmov) = " + ano;
+		sql += " And pcmov.codprod = pcprodut.codprod ";
+		sql += " And pcmov.numnota = pcnfsaid.numnota ";
+		sql += " And pcfornec.codfornec = pcnfsaid.codfornec ";
+		sql += " And pcfornec.cgc = '" + cnpjfornecedor + "'";
+		sql += " And pcprodut.descricao like '%" + descricao + "%'";
+		sql += " Group by pcmov.codfilial, extract(month from dtmov), pcprodut.codprod, pcprodut.descricao, pcprodut.classevenda ";
+		sql += " Order by mes ";
 
 		List<VendaProduto> results = new ArrayList<VendaProduto>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -69,17 +66,16 @@ public class VendaProdutoRepositoryImpl implements VendaProdutoRepository {
 				String classevenda = resultSet.getString("CLASSEVENDA").toString();
 				item.setClassevenda(classevenda);
 				results.add(item);
-			
+
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 

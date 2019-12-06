@@ -1,51 +1,47 @@
 package br.dataxpert.supplier.repository;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import br.dataxpert.supplier.conexaoBD.Conexao;
 import br.dataxpert.supplier.model.ItemPedidoFilial;
 import br.dataxpert.supplier.model.PedidoFilial;
-import br.dataxpert.supplier.model.Produto;
 import br.dataxpert.supplier.model.ResumoPedidoFornecedor;
 
 @Repository
 public class PedidoFilialRepositoryImpl implements PedidoFilialRepository {
 
 	public List<PedidoFilial> ObterPedidoFilialPorFornecedor(String cnpj, String ano, String mes) {
-		
-		Connection connection = null;
-		
-		
+
 		String sql = " Select distinct pcpedido.numped NUMPED, pcpedido.rotinalanc PEDLANC, ";
-        sql += " pcpedido.dtemissao EMIPED, pcpedido.vltotal VLPED, pcpedido.codfilial FILIALPED,  ";
-        sql += " pcpedido.dtprevent PREVPED, pcmov.numnota NUMNOTA, pcnfent.vltotal VLNOTA, ";
-        sql += " pcnfent.dtemissao EMINOTA, mdc.dataentrada RECEPNOTA ";
-        sql += " From pcpedido, pcmov, pcnfent, pcfornec, mdc_entradanfefilial mdc  ";
-        sql += " Where pcpedido.codfornec = pcfornec.codfornec  ";
-        sql += " and pcfornec.cgc = '" + cnpj + "'";
-        sql += " and pcpedido.codfilial = pcmov.codfilial  ";
-        sql += " and pcmov.codoper in ('E', 'EB', 'ER')  ";
-        sql += " and pcpedido.numped = pcmov.numped(+)  ";
-        sql += " and extract(year from pcpedido.dtemissao) = " + ano;
-        sql += " and extract(month from pcpedido.dtemissao) = " + mes;
-        sql += " and pcmov.numnota = pcnfent.numnota  ";
-        sql += " and pcmov.codfilial = pcnfent.codfilial  ";
-        sql += " and pcnfent.chavenfe = mdc.chavenfe(+)  ";
-        sql += " Order by pcpedido.dtemissao desc  ";
+		sql += " pcpedido.dtemissao EMIPED, pcpedido.vltotal VLPED, pcpedido.codfilial FILIALPED,  ";
+		sql += " pcpedido.dtprevent PREVPED, pcmov.numnota NUMNOTA, pcnfent.vltotal VLNOTA, ";
+		sql += " pcnfent.dtemissao EMINOTA, mdc.dataentrada RECEPNOTA ";
+		sql += " From pcpedido, pcmov, pcnfent, pcfornec, mdc_entradanfefilial mdc  ";
+		sql += " Where pcpedido.codfornec = pcfornec.codfornec  ";
+		sql += " and pcfornec.cgc = '" + cnpj + "'";
+		sql += " and pcpedido.codfilial = pcmov.codfilial  ";
+		sql += " and pcmov.codoper in ('E', 'EB', 'ER')  ";
+		sql += " and pcpedido.numped = pcmov.numped(+)  ";
+		sql += " and extract(year from pcpedido.dtemissao) = " + ano;
+		sql += " and extract(month from pcpedido.dtemissao) = " + mes;
+		sql += " and pcmov.numnota = pcnfent.numnota  ";
+		sql += " and pcmov.codfilial = pcnfent.codfilial  ";
+		sql += " and pcnfent.chavenfe = mdc.chavenfe(+)  ";
+		sql += " Order by pcpedido.dtemissao desc  ";
 
 		List<PedidoFilial> results = new ArrayList<PedidoFilial>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -74,14 +70,13 @@ public class PedidoFilialRepositoryImpl implements PedidoFilialRepository {
 
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 
@@ -90,25 +85,21 @@ public class PedidoFilialRepositoryImpl implements PedidoFilialRepository {
 	}
 
 	public List<ItemPedidoFilial> ObterItemPedidoFilialPorPedido(String filial, String pedido) {
-		
-		Connection connection = null;
-		
-		
+
 		String sql = " select pcitem.numped, pcprodut.codprod, pcprodut.descricao, pcprodut.qtunitcx, ";
-        sql += " pcprodut.unidade ,pcitem.qtpedida, pcitem.pcompra, pcitem.qtentregue, ";
-        sql += " pcprodut.obs ";
-        sql += " from pcitem, pcprodut ";
-        sql += " where pcitem.numped = " + pedido;
-        sql += " and pcitem.codprod = pcprodut.codprod ";
-        sql += " order by pcprodut.descricao ";
+		sql += " pcprodut.unidade ,pcitem.qtpedida, pcitem.pcompra, pcitem.qtentregue, ";
+		sql += " pcprodut.obs ";
+		sql += " from pcitem, pcprodut ";
+		sql += " where pcitem.numped = " + pedido;
+		sql += " and pcitem.codprod = pcprodut.codprod ";
+		sql += " order by pcprodut.descricao ";
 
 		List<ItemPedidoFilial> results = new ArrayList<ItemPedidoFilial>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -136,14 +127,13 @@ public class PedidoFilialRepositoryImpl implements PedidoFilialRepository {
 
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 
@@ -152,26 +142,22 @@ public class PedidoFilialRepositoryImpl implements PedidoFilialRepository {
 	}
 
 	public List<ResumoPedidoFornecedor> ObterResumoPedidosFornecedor(String cnpj) {
-		
-		Connection connection = null;
 
-		
 		String sql = " Select extract(year from pcpedido.dtemissao) ano, extract(month from pcpedido.dtemissao) mes, ";
-        sql += " count(pcpedido.numped) QTPED,  ";
-        sql += " sum(pcpedido.vltotal) VLRPED ";
-        sql += " From pcpedido, pcfornec ";
-        sql += " Where pcpedido.codfornec = pcfornec.codfornec ";
-        sql += " and pcfornec.cgc = '" + cnpj + "'";
-        sql += " group by extract(year from pcpedido.dtemissao), extract(month from pcpedido.dtemissao) ";
-        sql += " order by ano, mes desc ";
+		sql += " count(pcpedido.numped) QTPED,  ";
+		sql += " sum(pcpedido.vltotal) VLRPED ";
+		sql += " From pcpedido, pcfornec ";
+		sql += " Where pcpedido.codfornec = pcfornec.codfornec ";
+		sql += " and pcfornec.cgc = '" + cnpj + "'";
+		sql += " group by extract(year from pcpedido.dtemissao), extract(month from pcpedido.dtemissao) ";
+		sql += " order by ano, mes desc ";
 
 		List<ResumoPedidoFornecedor> results = new ArrayList<ResumoPedidoFornecedor>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@132.145.163.36:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -185,17 +171,16 @@ public class PedidoFilialRepositoryImpl implements PedidoFilialRepository {
 				String valorpedido = resultSet.getString("VLRPED").toString();
 				item.setValorpedido(valorpedido);
 				results.add(item);
-	
+
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 

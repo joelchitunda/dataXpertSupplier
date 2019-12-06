@@ -9,12 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.dataxpert.supplier.model.EstoqueFilial;
 import br.dataxpert.supplier.service.EstoqueFilialService;
 
 @Controller
-@RequestMapping("/estoquefilial")
+@RequestMapping("api/estoquefilial")
 public class EstoqueFilialController {
 
 	// public static final Logger logger =
@@ -22,10 +23,10 @@ public class EstoqueFilialController {
 
 	@Autowired
 	private EstoqueFilialService estoqueFilialService;
-
-	@RequestMapping(value = "/ObterEstoquePorFornecedor/", method = RequestMethod.GET)
-	public ResponseEntity<List<EstoqueFilial>> ObterEstoquePorFornecedor(@PathVariable String cnpjfornecedor,
-			@PathVariable String descricao) {
+	
+	@RequestMapping(value = "/ObterEstoquePorFornecedor", method = RequestMethod.GET)
+	public ResponseEntity<List<EstoqueFilial>> ObterEstoquePorFornecedor(@RequestParam(value="cnpjfornecedor") String cnpjfornecedor,
+			@RequestParam(value="descricao") String descricao) {
 
 		List<EstoqueFilial> estoques = estoqueFilialService.ObterEstoquePorFornecedor(cnpjfornecedor, descricao);
 
@@ -40,9 +41,9 @@ public class EstoqueFilialController {
 
 	}
 
-	@RequestMapping(value = "/ObterEstoqueFilialPorEAN/", method = RequestMethod.GET)
-	public ResponseEntity<List<EstoqueFilial>> ObterEstoqueFilialPorEAN(@PathVariable String filial,
-			@PathVariable String ean) {
+	@RequestMapping(value = "/ObterEstoqueFilialPorEAN", method = RequestMethod.GET)
+	public ResponseEntity<List<EstoqueFilial>> ObterEstoqueFilialPorEAN(@RequestParam(value="filial") String filial,
+			@RequestParam(value="ean") String ean) {
 
 		List<EstoqueFilial> estoques = estoqueFilialService.ObterEstoqueFilialPorEAN(filial, ean);
 

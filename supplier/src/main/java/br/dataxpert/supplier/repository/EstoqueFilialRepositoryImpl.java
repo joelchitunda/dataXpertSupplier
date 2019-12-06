@@ -1,15 +1,16 @@
 package br.dataxpert.supplier.repository;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.Long;
 
 import org.springframework.stereotype.Repository;
 
-import br.dataxpert.supplier.conexaoBD.Conexao;
 import br.dataxpert.supplier.model.EstoqueFilial;
 
 @Repository
@@ -17,12 +18,9 @@ public class EstoqueFilialRepositoryImpl implements EstoqueFilialRepository {
 
 	public List<EstoqueFilial> ObterEstoqueFilialPorEAN(String filial, String ean) {
 
-		
-		 //Eliminar zero a esquerda
-        Long eanNumber = Long.parseLong(ean);
-        ean = eanNumber.toString();
-        
-		Connection connection = null;
+		// Eliminar zero a esquerda
+		Long eanNumber = Long.parseLong(ean);
+		ean = eanNumber.toString();
 
 		String sql = " SELECT DISTINCT PCEST.CODFILIAL, PCEST.CODPROD, PCPRODUT.DESCRICAO, NVL(PCTABPR.PVENDA, 0) PRECO ";
 		sql += " , NVL(PCEST.QTESTGER, 0) - NVL(PCEST.QTRESERV, 0) - NVL(PCEST.QTBLOQUEADA, 0) - NVL(PCEST.QTPENDENTE, 0) ESTOQUE_DISPONIVEL  ";
@@ -67,11 +65,10 @@ public class EstoqueFilialRepositoryImpl implements EstoqueFilialRepository {
 
 		List<EstoqueFilial> results = new ArrayList<EstoqueFilial>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@10.10.0.15:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -91,27 +88,25 @@ public class EstoqueFilialRepositoryImpl implements EstoqueFilialRepository {
 
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 
 		return results;
 
 	}
+	
 
 	public List<EstoqueFilial> ObterEstoquePorFornecedor(String cnpjfornecedor, String descricao) {
-		
+
 		descricao = descricao.toUpperCase();
 		
-		Connection connection = null;
-
 		String sql = " Select pcprodut.codprod, pcprodut.descricao, pcprodut.codauxiliar, pcprodut.classevenda,";
 		sql += " NVL(PCEST.QTESTGER, 0) ESTOQUE_DISPONIVEL, pcest.codfilial, ";
 		sql += " round((pcest.qtgirodia * pcest.qtestger), 0) dias, (pcest.qtpedida) ";
@@ -135,11 +130,10 @@ public class EstoqueFilialRepositoryImpl implements EstoqueFilialRepository {
 
 		List<EstoqueFilial> results = new ArrayList<EstoqueFilial>();
 
-		try {
+		try (Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@10.10.0.15:1521/WINTHOR", "WINTHOR",
+				"WINTHOR"); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 
-			connection = Conexao.getConexao();
-			PreparedStatement statement = connection.prepareStatement(sql);
-			ResultSet resultSet = statement.executeQuery();
+			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 
@@ -164,14 +158,13 @@ public class EstoqueFilialRepositoryImpl implements EstoqueFilialRepository {
 
 			}
 
-		} catch (Exception err) {
+		} catch (SQLException e) {
 
-			String errMsg = err.getMessage();
-			// logger.info("Erro geral : {}", errMsg);
+			System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
 
-		} finally {
+		} catch (Exception e) {
 
-			Conexao.close();
+			e.printStackTrace();
 
 		}
 
