@@ -97,49 +97,44 @@ public class InfoProdutoRepositoryImpl implements InfoProdutoRepository {
 				InfoProduto item = new InfoProduto();
 				String cod_Interno = resultSet.getString("COD_INTERNO").toString();
 				item.setCod_interno(cod_Interno);
-				//String ean = resultSet.getString("EAN").toString();
-				item.setEan(ean);
+				String eanItem = resultSet.getString("EAN").toString();
+				item.setEan(eanItem);
 				String dun = resultSet.getString("DUN").toString();
 				item.setDun(dun);
 				String produto = resultSet.getString("PRODUTO").toString();
 				item.setProduto(produto);
-				
-				//TODO 
-				/*String preco = resultSet.getString("MARCA").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("LINHA").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("PARTICIPA_ECOMMERCE").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("PARTICIPA_RAPPI").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("RESUMO_ITEM").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("INDICACAO").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("ENRIQUECIDO_COM").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("APLICACAO").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("RESULTADO").toString();
-				item.setPreco(preco);
+				String marca = resultSet.getString("MARCA").toString();
+				item.setMarca(marca);
+				String linha = resultSet.getString("LINHA").toString();
+				item.setLinha(linha);
+				String participa_ecommerce = resultSet.getString("PARTICIPA_ECOMMERCE").toString();
+				item.setParticipa_ecommerce(participa_ecommerce);
+				String participa_rappi = resultSet.getString("PARTICIPA_RAPPI").toString();
+				item.setParticipa_rappi(participa_rappi);
+				String resumo_item = resultSet.getString("RESUMO_ITEM").toString();
+				item.setResumo_item(resumo_item);
+				String indicacao = resultSet.getString("INDICACAO").toString();
+				item.setIndicacao(indicacao);
+				String enriquecido_com = resultSet.getString("ENRIQUECIDO_COM").toString();
+				item.setEnriquecido_com(enriquecido_com);
+				String aplicacao = resultSet.getString("APLICACAO").toString();
+				item.setAplicacao(aplicacao);
+				String resultado = resultSet.getString("RESULTADO").toString();
+				item.setResultado(resultado);
 				String preco = resultSet.getString("PRECO").toString();
 				item.setPreco(preco);
-				String preco = resultSet.getString("ESTOQUE_FISICO").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("ESTOQUE_AVARIA").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("ESTOQUE_BLOQUEADO").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("ESTOQUE_RESERVADO").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("ESTOQUE_DISPONIVEL").toString();
-				item.setPreco(preco);
-				String preco = resultSet.getString("RESUMO_ITEM").toString();
-				item.setPreco(preco);
-				results.add(item);*/
+				String estoque_fisico = resultSet.getString("ESTOQUE_FISICO").toString();
+				item.setEstoque_fisico(estoque_fisico);
+				String estoque_avaria = resultSet.getString("ESTOQUE_AVARIA").toString();
+				item.setEstoque_avaria(estoque_avaria);
+				String estoque_bloqueado = resultSet.getString("ESTOQUE_BLOQUEADO").toString();
+				item.setEstoque_bloqueado(estoque_bloqueado);
+				String estoque_reservado = resultSet.getString("ESTOQUE_RESERVADO").toString();
+				item.setEstoque_reservado(estoque_reservado);
+				String estoque_disponivel = resultSet.getString("ESTOQUE_DISPONIVEL").toString();
+				item.setEstoque_disponivel(estoque_disponivel);
+				results.add(item);
 		
-
 			}
 
 		} catch (SQLException e) {

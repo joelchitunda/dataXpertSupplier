@@ -22,7 +22,7 @@ public class PromocaoController {
 	@Autowired
 	private PromocaoService promocaoService;
 	
-	//@RequestBody
+	//TODO - @RequestBody
 	@RequestMapping(value = "/SalvarPromocao", method = RequestMethod.POST)
 	public ResponseEntity<String> SalvarPromocao(@RequestParam(value="promocao") Promocao promocao) {
 
@@ -31,7 +31,7 @@ public class PromocaoController {
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 
 	}
-	//@RequestBody
+	//TODO - @RequestBody
 	@RequestMapping(value = "/SalvarPromocaoItens", method = RequestMethod.POST)
 	public ResponseEntity<Boolean> SalvarPromocaoItens(@RequestParam(value="promocao") List<PromocaoItem> plist) {
 

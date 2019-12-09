@@ -18,27 +18,26 @@ import br.dataxpert.supplier.service.InfoProdutoService;
 public class InfoProdutoController {
 
 	// public static final Logger logger =
-		// LoggerFactory.getLogger(ChatBotButtonController.class);
+	// LoggerFactory.getLogger(ChatBotButtonController.class);
 
-		@Autowired
-		private InfoProdutoService infoProdutoService;
+	@Autowired
+	private InfoProdutoService infoProdutoService;
 
-		@RequestMapping(value = "/ObterInfoProdutoPorEAN", method = RequestMethod.GET)
-		public ResponseEntity<List<InfoProduto>> ObterNotaFiscalPorFornecedor(@RequestParam(value="filial") String filial,
-				@RequestParam(value="ean") String ean) {
+	@RequestMapping(value = "/ObterInfoProdutoPorEAN", method = RequestMethod.GET)
+	public ResponseEntity<List<InfoProduto>> ObterNotaFiscalPorFornecedor(@RequestParam(value = "filial") String filial,
+			@RequestParam(value = "ean") String ean) {
 
-			List<InfoProduto> results = infoProdutoService.ObterInfoProdutoPorEAN(filial, ean);
-			List<InfoProduto> infos = results; 
+		List<InfoProduto> results = infoProdutoService.ObterInfoProdutoPorEAN(filial, ean);
+		List<InfoProduto> infos = results;
 
-			if (infos.isEmpty()) {
-				return new ResponseEntity(HttpStatus.NO_CONTENT);
-				// You may decide to return HttpStatus.NOT_FOUND
-
-			}
-
-			return new ResponseEntity<List<InfoProduto>>(infos, HttpStatus.OK);
+		if (infos.isEmpty()) {
+			return new ResponseEntity(HttpStatus.NO_CONTENT);
+			// You may decide to return HttpStatus.NOT_FOUND
 
 		}
 
-	
+		return new ResponseEntity<List<InfoProduto>>(infos, HttpStatus.OK);
+
+	}
+
 }

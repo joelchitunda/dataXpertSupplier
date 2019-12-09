@@ -11,11 +11,11 @@ import br.dataxpert.supplier.repository.InfoProdutoRepository;
 public class InfoProdutoServiceImpl implements InfoProdutoService {
 
 	InfoProdutoRepository repository;
-	
+
 	public List<InfoProduto> ObterInfoProdutoPorEAN(String filial, String ean) {
-	
+
 		return repository.ObterInfoProdutoPorEAN(filial, ean);
-		
+
 	}
 
 }
